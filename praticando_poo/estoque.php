@@ -5,6 +5,11 @@ require('classes/Estoque.class.php');
 require('classes/Movimentacao.class.php');
 
 Class Main{
+    private $objUsuario;
+    private $objFabricante;
+    private $objEstoque;
+    private $objMovimentacao;
+
     public function __construct(){
         echo "\n\n--- COMEÇO DO PROGRAMA ---\n\n";
 
@@ -13,19 +18,50 @@ Class Main{
         $objEstoque = new Estoque;
         $ObjMovimentacao = new Movimentacao;
 
-        switch ($_SERVER['argv'][1]){
+        $this->verificaSeExisteArg(1);
+		$this->executaOperacao( $_SERVER['argv'][1]);
+    }
+
+    private function excutaOperacao(string $operacao){
+        switch ($operacao){
             //pega o segundo argumento passado pelo usuário via
 			//linha de comando (o primeiro argumento é 
 			//o próprio arquivo)
         case 'gravaUsuario':
-            $this->gravaUsuario($objUsuario);
+            $this->gravaUsuario();
             break;
+
         case 'editaUsuario':
-            $this->editaUsuario($objUsuario);
+            $this->editaUsuario();
             break;
+        case 'listaUsuario':
+            $this->listaUsuario();
+            break;	
+        case 'apagaUsuario': 
+            $this->apagaUsuario();
+            break;	
         default:
             echo "\nERRO: Nao existe a funcionalidade {$_SERVER['argv'][1]}\n";
         }
+
+    }
+
+    private function apagaUsuario(){
+        $dados = $this->tratarDados();
+        $this->objUsuario->setDados($dados);
+            if($this->objUsuario->delete()){
+                echo "\nUsuário apagado com sucesso!\n";
+            } else{
+            echo "\nErro ao tentar apagar o usuário, você enviou o ID?\n";
+            }
+    }
+
+    private function listaUsuario(){
+        $lista = $this->objUsuario->getAll();
+        
+        foreach($lista as $usuario){
+        	echo "{$usuario['id']}\t{$usuario['cpf']}\t{$usuario['nome']}\n";
+        } 
     }
 
     public function editaUsuario($objUsuario){
@@ -48,6 +84,18 @@ Class Main{
                 
     }
 
+    private function verificaSeExisteArg(int $numArg){
+        if(!isset($_SERVER['argv'][$numArg])){
+            if($numArg == 1){
+                $msg = "para utilizar o programa digite: php estoque.php [operação]";
+            } else{
+                $msg = "para utilizar o programa digite: php estoque.php [operação] [dado=valor,dado2=valor2,...,dadoN=valorN]";
+            }
+        echo "\n\nErro: $msg\n\n";
+        exit();
+        }
+    }
+
     public function tratarDados(){               
         $args = explode( ',', $_SERVER['argv'][2]); //dados passados pelo usuário na linha de 	comando
                         
@@ -56,7 +104,7 @@ Class Main{
                         
             $dados[$arg[0]] = $arg[1];
         }
-                 
+
         return $dados;
     }
 
