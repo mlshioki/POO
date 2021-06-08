@@ -14,7 +14,7 @@ class EmprestimosController extends Controller
      */
     public function index()
     {
-        //
+        return view('emprestimo.emprestimos')->with('emprestimos', Emprestimos::all());
     }
 
     /**
@@ -24,7 +24,7 @@ class EmprestimosController extends Controller
      */
     public function create()
     {
-        //
+        return view('emprestimo.create');
     }
 
     /**
@@ -35,7 +35,8 @@ class EmprestimosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Emprestimos::create($request->all());
+        return redirect(route('emprestimo.emprestimos'));
     }
 
     /**
@@ -46,7 +47,7 @@ class EmprestimosController extends Controller
      */
     public function show(Emprestimos $emprestimos)
     {
-        //
+        return view('emprestimo.showEmprestimo')->with('emprestimo', $emprestimos);
     }
 
     /**
@@ -57,7 +58,7 @@ class EmprestimosController extends Controller
      */
     public function edit(Emprestimos $emprestimos)
     {
-        //
+        return view('emprestimo.edit')->with('emprestimo', $emprestimos);
     }
 
     /**
@@ -69,7 +70,9 @@ class EmprestimosController extends Controller
      */
     public function update(Request $request, Emprestimos $emprestimos)
     {
-        //
+        $emprestimos->update($request->all());
+        session()->flash('success', 'O empréstimo foi atualizado com sucesso!');
+        return redirect(route('emprestimo.emprestimos'));
     }
 
     /**
@@ -80,6 +83,8 @@ class EmprestimosController extends Controller
      */
     public function destroy(Emprestimos $emprestimos)
     {
-        //
+        $emprestimos->delete();
+        session()->flash('success', 'O empréstimo '. $emprestimos->nome . ' foi apagado com sucesso!');
+        return redirect(route('emprestimo.emprestimos'));
     }
 }
