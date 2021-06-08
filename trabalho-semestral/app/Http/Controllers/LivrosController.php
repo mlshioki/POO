@@ -22,19 +22,12 @@ class LivrosController extends Controller
     }
 
     public function store(Request $request){
-        if($request->image){
-            $image =  $request->file('image')->store('livro');
-            $image = "storage/".$image;
-        }else{
-            $image = "storage/livro/imagempadrao.jpg";
-        }
 
         $livro = Livros::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'category_id' => $request->category_id,
-            'image' =>$image
+            'titulo' => $request->titulo,
+            'autor' => $request->autor,
+            'edicao' => $request->edicao,
+            'category_id' => $request->category_id
         ]);
 
         $livro->tags()->sync($request->tags);
@@ -43,20 +36,12 @@ class LivrosController extends Controller
     }
 
     public function update(Request $request, Livros $livro){
-        if($request->image){
-            $image =  $request->file('image')->store('livro');
-            $image = "storage/".$image;
-            if($livro->image != "storage/livro/imagempadrao.jpg")
-            Storage::delete(str_replace('storage/', '',$livro->image));
-        }else{
-            $image = $livro->image;
-        }
+        
         $livro->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'category_id' => $request->category_id,
-            'image' =>$image
+            'titulo' => $request->titulo,
+            'autor' => $request->autor,
+            'edicao' => $request->edicao,
+            'category_id' => $request->category_id
         ]);
 
         $livro->tags()->sync($request->tags);
